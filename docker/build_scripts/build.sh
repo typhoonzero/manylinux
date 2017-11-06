@@ -55,9 +55,14 @@ yum -y install bzip2 make git patch unzip bison yasm diffutils \
     ${PYTHON_COMPILE_DEPS}
 
 # Install more recent version of cmake
-curl -O https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.sh
-/bin/sh cmake-3.8.1-Linux-x86_64.sh --prefix=/usr/local --skip-license
-rm cmake-3.8.1-Linux-x86_64.sh
+# curl -O https://cmake.org/files/v3.8/cmake-3.8.1-Linux-x86_64.sh
+# /bin/sh cmake-3.8.1-Linux-x86_64.sh --prefix=/usr/local --skip-license
+# rm cmake-3.8.1-Linux-x86_64.sh
+
+wget -q https://cmake.org/files/v3.5/cmake-3.5.2.tar.gz && tar xzf cmake-3.5.2.tar.gz && \
+cd cmake-3.5.2 && ./bootstrap && \
+make -j4 && make install && cd .. && rm cmake-3.5.2.tar.gz
+
 
 # Install newest autoconf
 build_autoconf $AUTOCONF_ROOT $AUTOCONF_HASH

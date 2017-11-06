@@ -5,7 +5,8 @@ PYTHON_DOWNLOAD_URL=https://www.python.org/ftp/python
 # XXX: the official https server at www.openssl.org cannot be reached
 # with the old versions of openssl and curl in Centos 5.11 hence the fallback
 # to the ftp mirror:
-OPENSSL_DOWNLOAD_URL=ftp://ftp.openssl.org/source
+# OPENSSL_DOWNLOAD_URL=ftp://ftp.openssl.org/source
+OPENSSL_DOWNLOAD_URL=https://www.openssl.org/source
 # Ditto the curl sources
 CURL_DOWNLOAD_URL=http://curl.askapache.com/download
 
@@ -64,10 +65,9 @@ function do_cpython_build {
         ln -s python3 ${prefix}/bin/python
     fi
     # NOTE Make libpython shared library visible to python calls below
-    local LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${prefix}/lib"
-    ${prefix}/bin/python get-pip.py
-    ${prefix}/bin/pip install wheel
-    local abi_tag=$(${prefix}/bin/python ${MY_DIR}/python-tag-abi-tag.py)
+    LD_LIBRARY_PATH="${prefix}/lib" ${prefix}/bin/python get-pip.py
+    LD_LIBRARY_PATH="${prefix}/lib" ${prefix}/bin/pip install wheel
+    local abi_tag=$(LD_LIBRARY_PATH="${prefix}/lib" ${prefix}/bin/python ${MY_DIR}/python-tag-abi-tag.py)
     ln -s ${prefix} /opt/python/${abi_tag}
 }
 
@@ -79,7 +79,7 @@ function build_cpython {
     wget -q $PYTHON_DOWNLOAD_URL/$py_ver/Python-$py_ver.tgz
     if [ $(lex_pyver $py_ver) -lt $(lex_pyver 3.3) ]; then
         # NOTE We only need wide unicode for nupic.bindings wheel
-        #do_cpython_build $py_ver ucs2
+        do_cpython_build $py_ver ucs2
         do_cpython_build $py_ver ucs4
     else
         do_cpython_build $py_ver none
