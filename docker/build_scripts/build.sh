@@ -87,7 +87,7 @@ LD_LIBRARY_PATH="${ORIGINAL_LD_LIBRARY_PATH}:$(dirname ${PY35_BIN})/lib"
 #   (https://github.com/pypa/manylinux/issues/53)
 # And it's not clear how up-to-date that is anyway
 # So let's just use the same one pip and everyone uses
-$PY35_BIN/pip install certifi
+LD_LIBRARY_PATH="${ORIGINAL_LD_LIBRARY_PATH}:$(dirname ${PY35_BIN})/lib" $PY35_BIN/pip install certifi
 ln -s $($PY35_BIN/python -c 'import certifi; print(certifi.where())') \
       /opt/_internal/certs.pem
 # If you modify this line you also have to modify the versions in the
@@ -112,7 +112,7 @@ tar -xzf patchelf-0.9njs2.tar.gz
 rm -rf patchelf-0.9njs2.tar.gz patchelf-0.9njs2
 
 # Install latest pypi release of auditwheel
-$PY35_BIN/pip install auditwheel
+LD_LIBRARY_PATH="${ORIGINAL_LD_LIBRARY_PATH}:$(dirname ${PY35_BIN})/lib" $PY35_BIN/pip install auditwheel
 ln -s $PY35_BIN/auditwheel /usr/local/bin/auditwheel
 
 # Clean up development headers and other unnecessary stuff for
@@ -143,9 +143,9 @@ for PYTHON in /opt/python/*/bin/python; do
 
     # Smoke test to make sure that our Pythons work, and do indeed detect as
     # being manylinux compatible:
-    $PYTHON $MY_DIR/manylinux1-check.py
+    LD_LIBRARY_PATH="${ORIGINAL_LD_LIBRARY_PATH}:$(dirname $(dirname ${PYTHON}))/lib" $PYTHON $MY_DIR/manylinux1-check.py
     # Make sure that SSL cert checking works
-    $PYTHON $MY_DIR/ssl-check.py
+    LD_LIBRARY_PATH="${ORIGINAL_LD_LIBRARY_PATH}:$(dirname $(dirname ${PYTHON}))/lib" $PYTHON $MY_DIR/ssl-check.py
 done
 
 # Restore LD_LIBRARY_PATH
